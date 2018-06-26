@@ -1,0 +1,11 @@
+services:
+  block_parent_tester.block_parent_tester_create_blocks:
+    class: Drupal\block_parent_tester\Command\CreateBlocksCommand
+    arguments: []
+    tags:
+      - { name: drupal.command }
+  block_parent_tester.blocks_profiler_delete:
+    class: Drupal\block_parent_tester\Command\DeleteCommand
+    arguments: []
+    tags:
+      - { name: drupal.command }

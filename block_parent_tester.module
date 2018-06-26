@@ -1,0 +1,49 @@
+<?php
+
+/**
+ * @file
+ * Contains block_parent_tester.module.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\block_content\Entity\BlockContent;
+
+/**
+ * Implements hook_help().
+ */
+function block_parent_tester_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the block_parent_tester module.
+    case 'help.page.block_parent_tester':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('My Awesome Module') . '</p>';
+      return $output;
+
+    default:
+  }
+}
+
+
+/**
+ * Implements hook_entity_delete().
+ */
+function block_parent_tester_entity_delete(Drupal\Core\Entity\EntityInterface $entity) {
+  $query = \Drupal::entityTypeManager()->getStorage('block_content')->getQuery();
+  $query->condition('parent_entity_id', $entity->id());
+  $query->condition('parent_entity_type', $entity->getEntityTypeId());
+  $block_ids = $query->execute();
+
+  foreach ($block_ids as $block_id) {
+    if ($block = BlockContent::load($block_id)) {
+      $block->delete();
+    }
+  }
+  return;
+  $blocks = BlockContent::loadMultiple($block_ids);
+  /** @var \Drupal\block_content\Entity\BlockContent $block */
+  foreach ($blocks as $block) {
+    $block->setPublished(FALSE);
+    $block->save();
+  }
+}
